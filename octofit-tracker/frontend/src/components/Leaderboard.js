@@ -17,8 +17,6 @@ function Leaderboard() {
         
         const leaderboardEndpoint = `${baseUrl}/api/leaderboard/`;
         const teamsEndpoint = `${baseUrl}/api/teams/`;
-        console.log('Leaderboard - Fetching from API endpoints:', leaderboardEndpoint, teamsEndpoint);
-        console.log('Leaderboard - REACT_APP_CODESPACE_NAME:', process.env.REACT_APP_CODESPACE_NAME);
         
         const [leaderboardResponse, teamsResponse] = await Promise.all([
           fetch(leaderboardEndpoint),
@@ -31,19 +29,17 @@ function Leaderboard() {
         
         const leaderboardData = await leaderboardResponse.json();
         const teamsData = await teamsResponse.json();
-        console.log('Leaderboard - Raw fetched leaderboard data:', leaderboardData);
-        console.log('Leaderboard - Raw fetched teams data:', teamsData);
         
         // Handle both paginated (.results) and plain array responses
         const leaderboard = Array.isArray(leaderboardData) ? leaderboardData : leaderboardData.results || [];
         const allTeams = Array.isArray(teamsData) ? teamsData : teamsData.results || [];
-        console.log('Leaderboard - Processed entries count:', leaderboard.length);
-        console.log('Leaderboard - Processed teams count:', allTeams.length);
         setLeaderboard(leaderboard);
         setTeams(allTeams);
         setLoading(false);
       } catch (err) {
-        console.error('Error fetching data:', err);
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Error fetching data:', err);
+        }
         setError(err.message);
         setLoading(false);
       }

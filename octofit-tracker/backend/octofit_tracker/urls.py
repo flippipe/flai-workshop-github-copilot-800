@@ -33,6 +33,15 @@ from .views import (
 # https://$CODESPACE_NAME-8000.app.github.dev/api/[component]/
 # Example: https://$CODESPACE_NAME-8000.app.github.dev/api/activities/
 
+# Construct base URL for API endpoints based on environment
+# This follows the project guideline pattern for codespace URL construction
+codespace_name = os.environ.get('CODESPACE_NAME')
+if codespace_name:
+    base_url = f"https://{codespace_name}-8000.app.github.dev"
+else:
+    base_url = "http://localhost:8000"
+# Note: base_url can be used for constructing absolute URLs in API responses if needed
+
 # Create router and register viewsets
 router = routers.DefaultRouter()
 router.register(r'teams', TeamViewSet)

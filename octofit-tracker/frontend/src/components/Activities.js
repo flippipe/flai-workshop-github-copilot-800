@@ -15,8 +15,6 @@ function Activities() {
           : `https://${codespace}-8000.app.github.dev`;
         
         const apiEndpoint = `${baseUrl}/api/activities/`;
-        console.log('Activities - Fetching from API endpoint:', apiEndpoint);
-        console.log('Activities - REACT_APP_CODESPACE_NAME:', process.env.REACT_APP_CODESPACE_NAME);
         
         const response = await fetch(apiEndpoint);
         
@@ -25,16 +23,15 @@ function Activities() {
         }
         
         const data = await response.json();
-        console.log('Activities - Raw fetched data:', data);
-        console.log('Activities - Data type:', Array.isArray(data) ? 'array' : 'object');
         
         // Handle both paginated (.results) and plain array responses
         const activitiesData = Array.isArray(data) ? data : data.results || [];
-        console.log('Activities - Processed activities count:', activitiesData.length);
         setActivities(activitiesData);
         setLoading(false);
       } catch (err) {
-        console.error('Error fetching activities:', err);
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Error fetching activities:', err);
+        }
         setError(err.message);
         setLoading(false);
       }

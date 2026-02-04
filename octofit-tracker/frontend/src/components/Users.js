@@ -20,8 +20,6 @@ function Users() {
         
         const usersEndpoint = `${baseUrl}/api/users/`;
         const teamsEndpoint = `${baseUrl}/api/teams/`;
-        console.log('Users - Fetching from API endpoints:', usersEndpoint, teamsEndpoint);
-        console.log('Users - REACT_APP_CODESPACE_NAME:', process.env.REACT_APP_CODESPACE_NAME);
         
         const [usersResponse, teamsResponse] = await Promise.all([
           fetch(usersEndpoint),
@@ -34,19 +32,17 @@ function Users() {
         
         const usersData = await usersResponse.json();
         const teamsData = await teamsResponse.json();
-        console.log('Users - Raw fetched users data:', usersData);
-        console.log('Users - Raw fetched teams data:', teamsData);
-        console.log('Users - Data type:', Array.isArray(usersData) ? 'array' : 'object');
         
         // Handle both paginated (.results) and plain array responses
         const allUsers = Array.isArray(usersData) ? usersData : usersData.results || [];
         const allTeams = Array.isArray(teamsData) ? teamsData : teamsData.results || [];
-        console.log('Users - Processed users count:', allUsers.length);
         setUsers(allUsers);
         setTeams(allTeams);
         setLoading(false);
       } catch (err) {
-        console.error('Error fetching data:', err);
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Error fetching data:', err);
+        }
         setError(err.message);
         setLoading(false);
       }
@@ -89,8 +85,6 @@ function Users() {
         : `https://${codespace}-8000.app.github.dev`;
       
       const apiEndpoint = `${baseUrl}/api/users/${editingUser._id}/`;
-      console.log('Users - Updating user at:', apiEndpoint);
-      console.log('Users - Form data:', formData);
       
       const response = await fetch(apiEndpoint, {
         method: 'PATCH',
@@ -105,13 +99,14 @@ function Users() {
       }
       
       const updatedUser = await response.json();
-      console.log('Users - Updated user:', updatedUser);
       
       // Update the users list
       setUsers(users.map(u => u._id === updatedUser._id ? updatedUser : u));
       handleClose();
     } catch (err) {
-      console.error('Error updating user:', err);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Error updating user:', err);
+      }
       alert('Failed to update user: ' + err.message);
     }
   };
