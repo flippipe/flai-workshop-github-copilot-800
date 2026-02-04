@@ -8,21 +8,30 @@ function Users() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        // REST API endpoint format: https://$CODESPACE_NAME-8000.app.github.dev/api/users/
+        // REST API endpoint format: https://$REACT_APP_CODESPACE_NAME-8000.app.github.dev/api/users/
         const codespace = process.env.REACT_APP_CODESPACE_NAME || 'localhost:8000';
         const baseUrl = codespace.includes('localhost') 
           ? `http://${codespace}` 
           : `https://${codespace}-8000.app.github.dev`;
         
-        const response = await fetch(`${baseUrl}/api/users/`);
+        const apiEndpoint = `${baseUrl}/api/users/`;
+        console.log('Users - Fetching from API endpoint:', apiEndpoint);
+        console.log('Users - REACT_APP_CODESPACE_NAME:', process.env.REACT_APP_CODESPACE_NAME);
+        
+        const response = await fetch(apiEndpoint);
         
         if (!response.ok) {
           throw new Error('Failed to fetch users');
         }
         
         const data = await response.json();
+        console.log('Users - Raw fetched data:', data);
+        console.log('Users - Data type:', Array.isArray(data) ? 'array' : 'object');
+        
         // Handle both paginated (.results) and plain array responses
-        setUsers(Array.isArray(data) ? data : data.results || []);
+        const usersData = Array.isArray(data) ? data : data.results || [];
+        console.log('Users - Processed users count:', usersData.length);
+        setUsers(usersData);
         setLoading(false);
       } catch (err) {
         console.error('Error fetching users:', err);

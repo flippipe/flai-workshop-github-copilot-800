@@ -8,21 +8,30 @@ function Teams() {
   useEffect(() => {
     const fetchTeams = async () => {
       try {
-        // REST API endpoint format: https://$CODESPACE_NAME-8000.app.github.dev/api/teams/
+        // REST API endpoint format: https://$REACT_APP_CODESPACE_NAME-8000.app.github.dev/api/teams/
         const codespace = process.env.REACT_APP_CODESPACE_NAME || 'localhost:8000';
         const baseUrl = codespace.includes('localhost') 
           ? `http://${codespace}` 
           : `https://${codespace}-8000.app.github.dev`;
         
-        const response = await fetch(`${baseUrl}/api/teams/`);
+        const apiEndpoint = `${baseUrl}/api/teams/`;
+        console.log('Teams - Fetching from API endpoint:', apiEndpoint);
+        console.log('Teams - REACT_APP_CODESPACE_NAME:', process.env.REACT_APP_CODESPACE_NAME);
+        
+        const response = await fetch(apiEndpoint);
         
         if (!response.ok) {
           throw new Error('Failed to fetch teams');
         }
         
         const data = await response.json();
+        console.log('Teams - Raw fetched data:', data);
+        console.log('Teams - Data type:', Array.isArray(data) ? 'array' : 'object');
+        
         // Handle both paginated (.results) and plain array responses
-        setTeams(Array.isArray(data) ? data : data.results || []);
+        const teamsData = Array.isArray(data) ? data : data.results || [];
+        console.log('Teams - Processed teams count:', teamsData.length);
+        setTeams(teamsData);
         setLoading(false);
       } catch (err) {
         console.error('Error fetching teams:', err);

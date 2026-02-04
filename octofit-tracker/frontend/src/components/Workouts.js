@@ -8,21 +8,30 @@ function Workouts() {
   useEffect(() => {
     const fetchWorkouts = async () => {
       try {
-        // REST API endpoint format: https://$CODESPACE_NAME-8000.app.github.dev/api/workouts/
+        // REST API endpoint format: https://$REACT_APP_CODESPACE_NAME-8000.app.github.dev/api/workouts/
         const codespace = process.env.REACT_APP_CODESPACE_NAME || 'localhost:8000';
         const baseUrl = codespace.includes('localhost') 
           ? `http://${codespace}` 
           : `https://${codespace}-8000.app.github.dev`;
         
-        const response = await fetch(`${baseUrl}/api/workouts/`);
+        const apiEndpoint = `${baseUrl}/api/workouts/`;
+        console.log('Workouts - Fetching from API endpoint:', apiEndpoint);
+        console.log('Workouts - REACT_APP_CODESPACE_NAME:', process.env.REACT_APP_CODESPACE_NAME);
+        
+        const response = await fetch(apiEndpoint);
         
         if (!response.ok) {
           throw new Error('Failed to fetch workouts');
         }
         
         const data = await response.json();
+        console.log('Workouts - Raw fetched data:', data);
+        console.log('Workouts - Data type:', Array.isArray(data) ? 'array' : 'object');
+        
         // Handle both paginated (.results) and plain array responses
-        setWorkouts(Array.isArray(data) ? data : data.results || []);
+        const workoutsData = Array.isArray(data) ? data : data.results || [];
+        console.log('Workouts - Processed workouts count:', workoutsData.length);
+        setWorkouts(workoutsData);
         setLoading(false);
       } catch (err) {
         console.error('Error fetching workouts:', err);

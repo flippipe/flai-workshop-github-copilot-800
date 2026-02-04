@@ -8,21 +8,30 @@ function Leaderboard() {
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
-        // REST API endpoint format: https://$CODESPACE_NAME-8000.app.github.dev/api/leaderboard/
+        // REST API endpoint format: https://$REACT_APP_CODESPACE_NAME-8000.app.github.dev/api/leaderboard/
         const codespace = process.env.REACT_APP_CODESPACE_NAME || 'localhost:8000';
         const baseUrl = codespace.includes('localhost') 
           ? `http://${codespace}` 
           : `https://${codespace}-8000.app.github.dev`;
         
-        const response = await fetch(`${baseUrl}/api/leaderboard/`);
+        const apiEndpoint = `${baseUrl}/api/leaderboard/`;
+        console.log('Leaderboard - Fetching from API endpoint:', apiEndpoint);
+        console.log('Leaderboard - REACT_APP_CODESPACE_NAME:', process.env.REACT_APP_CODESPACE_NAME);
+        
+        const response = await fetch(apiEndpoint);
         
         if (!response.ok) {
           throw new Error('Failed to fetch leaderboard');
         }
         
         const data = await response.json();
+        console.log('Leaderboard - Raw fetched data:', data);
+        console.log('Leaderboard - Data type:', Array.isArray(data) ? 'array' : 'object');
+        
         // Handle both paginated (.results) and plain array responses
-        setLeaderboard(Array.isArray(data) ? data : data.results || []);
+        const leaderboardData = Array.isArray(data) ? data : data.results || [];
+        console.log('Leaderboard - Processed entries count:', leaderboardData.length);
+        setLeaderboard(leaderboardData);
         setLoading(false);
       } catch (err) {
         console.error('Error fetching leaderboard:', err);

@@ -8,6 +8,16 @@ import Users from './components/Users';
 import Workouts from './components/Workouts';
 
 function App() {
+  // Log environment configuration on app load
+  console.log('=== OctoFit Tracker App Configuration ===');
+  console.log('REACT_APP_CODESPACE_NAME:', process.env.REACT_APP_CODESPACE_NAME);
+  console.log('Node Environment:', process.env.NODE_ENV);
+  console.log('Backend API Base URL:', 
+    process.env.REACT_APP_CODESPACE_NAME 
+      ? `https://${process.env.REACT_APP_CODESPACE_NAME}-8000.app.github.dev` 
+      : 'http://localhost:8000'
+  );
+  
   return (
     <Router>
       <div className="App">

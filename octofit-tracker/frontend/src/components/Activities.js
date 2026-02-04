@@ -8,21 +8,30 @@ function Activities() {
   useEffect(() => {
     const fetchActivities = async () => {
       try {
-        // REST API endpoint format: https://$CODESPACE_NAME-8000.app.github.dev/api/activities/
+        // REST API endpoint format: https://$REACT_APP_CODESPACE_NAME-8000.app.github.dev/api/activities/
         const codespace = process.env.REACT_APP_CODESPACE_NAME || 'localhost:8000';
         const baseUrl = codespace.includes('localhost') 
           ? `http://${codespace}` 
           : `https://${codespace}-8000.app.github.dev`;
         
-        const response = await fetch(`${baseUrl}/api/activities/`);
+        const apiEndpoint = `${baseUrl}/api/activities/`;
+        console.log('Activities - Fetching from API endpoint:', apiEndpoint);
+        console.log('Activities - REACT_APP_CODESPACE_NAME:', process.env.REACT_APP_CODESPACE_NAME);
+        
+        const response = await fetch(apiEndpoint);
         
         if (!response.ok) {
           throw new Error('Failed to fetch activities');
         }
         
         const data = await response.json();
+        console.log('Activities - Raw fetched data:', data);
+        console.log('Activities - Data type:', Array.isArray(data) ? 'array' : 'object');
+        
         // Handle both paginated (.results) and plain array responses
-        setActivities(Array.isArray(data) ? data : data.results || []);
+        const activitiesData = Array.isArray(data) ? data : data.results || [];
+        console.log('Activities - Processed activities count:', activitiesData.length);
+        setActivities(activitiesData);
         setLoading(false);
       } catch (err) {
         console.error('Error fetching activities:', err);
