@@ -9,6 +9,15 @@ from .serializers import (
     WorkoutSerializer
 )
 
+# NOTE: User registration validation endpoint is not yet implemented.
+# The PR title mentions "Add registration validation and more activities" but
+# this PR currently only includes basic CRUD operations via ModelViewSet.
+# Future work should include:
+# - Dedicated registration endpoint with email validation
+# - Password validation and hashing
+# - Email verification workflow
+# - Custom user creation logic with proper error handling
+
 
 class TeamViewSet(viewsets.ModelViewSet):
     queryset = Team.objects.all()
