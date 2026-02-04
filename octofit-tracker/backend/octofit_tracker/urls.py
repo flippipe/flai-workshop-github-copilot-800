@@ -29,6 +29,10 @@ from .views import (
     WorkoutViewSet
 )
 
+# REST API endpoint format for GitHub Codespaces:
+# https://$CODESPACE_NAME-8000.app.github.dev/api/[component]/
+# Example: https://$CODESPACE_NAME-8000.app.github.dev/api/activities/
+
 # Create router and register viewsets
 router = routers.DefaultRouter()
 router.register(r'teams', TeamViewSet)
