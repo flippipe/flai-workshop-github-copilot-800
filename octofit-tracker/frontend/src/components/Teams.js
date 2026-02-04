@@ -17,8 +17,6 @@ function Teams() {
         
         const teamsEndpoint = `${baseUrl}/api/teams/`;
         const usersEndpoint = `${baseUrl}/api/users/`;
-        console.log('Teams - Fetching from API endpoints:', teamsEndpoint, usersEndpoint);
-        console.log('Teams - REACT_APP_CODESPACE_NAME:', process.env.REACT_APP_CODESPACE_NAME);
         
         const [teamsResponse, usersResponse] = await Promise.all([
           fetch(teamsEndpoint),
@@ -31,19 +29,17 @@ function Teams() {
         
         const teamsData = await teamsResponse.json();
         const usersData = await usersResponse.json();
-        console.log('Teams - Raw fetched teams data:', teamsData);
-        console.log('Teams - Raw fetched users data:', usersData);
         
         // Handle both paginated (.results) and plain array responses
         const teams = Array.isArray(teamsData) ? teamsData : teamsData.results || [];
         const allUsers = Array.isArray(usersData) ? usersData : usersData.results || [];
-        console.log('Teams - Processed teams count:', teams.length);
-        console.log('Teams - Processed users count:', allUsers.length);
         setTeams(teams);
         setUsers(allUsers);
         setLoading(false);
       } catch (err) {
-        console.error('Error fetching data:', err);
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Error fetching data:', err);
+        }
         setError(err.message);
         setLoading(false);
       }

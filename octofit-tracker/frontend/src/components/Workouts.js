@@ -15,8 +15,6 @@ function Workouts() {
           : `https://${codespace}-8000.app.github.dev`;
         
         const apiEndpoint = `${baseUrl}/api/workouts/`;
-        console.log('Workouts - Fetching from API endpoint:', apiEndpoint);
-        console.log('Workouts - REACT_APP_CODESPACE_NAME:', process.env.REACT_APP_CODESPACE_NAME);
         
         const response = await fetch(apiEndpoint);
         
@@ -25,16 +23,15 @@ function Workouts() {
         }
         
         const data = await response.json();
-        console.log('Workouts - Raw fetched data:', data);
-        console.log('Workouts - Data type:', Array.isArray(data) ? 'array' : 'object');
         
         // Handle both paginated (.results) and plain array responses
         const workoutsData = Array.isArray(data) ? data : data.results || [];
-        console.log('Workouts - Processed workouts count:', workoutsData.length);
         setWorkouts(workoutsData);
         setLoading(false);
       } catch (err) {
-        console.error('Error fetching workouts:', err);
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Error fetching workouts:', err);
+        }
         setError(err.message);
         setLoading(false);
       }

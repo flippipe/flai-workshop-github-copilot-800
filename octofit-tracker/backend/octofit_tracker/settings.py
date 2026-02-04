@@ -21,10 +21,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-e(n+n4i3r&6t&e0@sr*l0=s2+17_02_$)fjlgipue=mm*tat4@'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-e(n+n4i3r&6t&e0@sr*l0=s2+17_02_$)fjlgipue=mm*tat4@')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 if os.environ.get('CODESPACE_NAME'):
@@ -88,17 +88,34 @@ WSGI_APPLICATION = 'octofit_tracker.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'djongo',
-        'NAME': 'octofit_db',
-        'ENFORCE_SCHEMA': False,
-        'CLIENT': {
-            'host': 'localhost',
-            'port': 27017,
+MONGODB_URI = os.environ.get('MONGODB_URI')
+MONGODB_DB_NAME = os.environ.get('MONGODB_DB_NAME', 'octofit_db')
+
+if MONGODB_URI:
+    # Use authenticated MongoDB connection string for production or secured environments
+    DATABASES = {
+        'default': {
+            'ENGINE': 'djongo',
+            'NAME': MONGODB_DB_NAME,
+            'ENFORCE_SCHEMA': False,
+            'CLIENT': {
+                'host': MONGODB_URI,
+            }
         }
     }
-}
+else:
+    # Fallback to local MongoDB instance for development
+    DATABASES = {
+        'default': {
+            'ENGINE': 'djongo',
+            'NAME': MONGODB_DB_NAME,
+            'ENFORCE_SCHEMA': False,
+            'CLIENT': {
+                'host': 'localhost',
+                'port': 27017,
+            }
+        }
+    }
 
 
 # Password validation
@@ -143,7 +160,18 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CORS settings
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = False
+
+# Explicitly allow only trusted frontend origins
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
+
+# Add Codespaces frontend URL on port 3000 if running in a Codespace
+if os.environ.get('CODESPACE_NAME'):
+    codespace_name = os.environ.get('CODESPACE_NAME')
+    CORS_ALLOWED_ORIGINS.append(f"https://{codespace_name}-3000.app.github.dev")
+
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_METHODS = [
     'DELETE',
