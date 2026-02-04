@@ -93,10 +93,10 @@ function Activities() {
                   <td><strong>#{activity._id}</strong></td>
                   <td>{activity.user_id}</td>
                   <td><span className="badge bg-primary">{activity.type}</span></td>
-                  <td>{activity.duration}</td>
-                  <td>{activity.distance?.toFixed(2)}</td>
-                  <td><span className="badge bg-success">{activity.calories}</span></td>
-                  <td>{new Date(activity.date).toLocaleDateString()}</td>
+                  <td>{activity.duration} min</td>
+                  <td>{activity.distance?.toFixed(2)} km</td>
+                  <td><span className="badge bg-success">{activity.calories} cal</span></td>
+                  <td>{activity.date ? new Date(activity.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A'}</td>
                   <td className="text-muted">{activity.notes}</td>
                 </tr>
               ))}

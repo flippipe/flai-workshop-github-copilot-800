@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 
 function Teams() {
   const [teams, setTeams] = useState([]);
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchTeams = async () => {
+    const fetchData = async () => {
       try {
         // REST API endpoint format: https://$REACT_APP_CODESPACE_NAME-8000.app.github.dev/api/teams/
         const codespace = process.env.REACT_APP_CODESPACE_NAME || 'localhost:8000';
@@ -14,34 +15,46 @@ function Teams() {
           ? `http://${codespace}` 
           : `https://${codespace}-8000.app.github.dev`;
         
-        const apiEndpoint = `${baseUrl}/api/teams/`;
-        console.log('Teams - Fetching from API endpoint:', apiEndpoint);
+        const teamsEndpoint = `${baseUrl}/api/teams/`;
+        const usersEndpoint = `${baseUrl}/api/users/`;
+        console.log('Teams - Fetching from API endpoints:', teamsEndpoint, usersEndpoint);
         console.log('Teams - REACT_APP_CODESPACE_NAME:', process.env.REACT_APP_CODESPACE_NAME);
         
-        const response = await fetch(apiEndpoint);
+        const [teamsResponse, usersResponse] = await Promise.all([
+          fetch(teamsEndpoint),
+          fetch(usersEndpoint)
+        ]);
         
-        if (!response.ok) {
-          throw new Error('Failed to fetch teams');
+        if (!teamsResponse.ok || !usersResponse.ok) {
+          throw new Error('Failed to fetch data');
         }
         
-        const data = await response.json();
-        console.log('Teams - Raw fetched data:', data);
-        console.log('Teams - Data type:', Array.isArray(data) ? 'array' : 'object');
+        const teamsData = await teamsResponse.json();
+        const usersData = await usersResponse.json();
+        console.log('Teams - Raw fetched teams data:', teamsData);
+        console.log('Teams - Raw fetched users data:', usersData);
         
         // Handle both paginated (.results) and plain array responses
-        const teamsData = Array.isArray(data) ? data : data.results || [];
-        console.log('Teams - Processed teams count:', teamsData.length);
-        setTeams(teamsData);
+        const teams = Array.isArray(teamsData) ? teamsData : teamsData.results || [];
+        const allUsers = Array.isArray(usersData) ? usersData : usersData.results || [];
+        console.log('Teams - Processed teams count:', teams.length);
+        console.log('Teams - Processed users count:', allUsers.length);
+        setTeams(teams);
+        setUsers(allUsers);
         setLoading(false);
       } catch (err) {
-        console.error('Error fetching teams:', err);
+        console.error('Error fetching data:', err);
         setError(err.message);
         setLoading(false);
       }
     };
 
-    fetchTeams();
+    fetchData();
   }, []);
+
+  const getMemberCount = (teamId) => {
+    return users.filter(user => user.team_id === teamId).length;
+  };
 
   if (loading) {
     return (
@@ -81,7 +94,10 @@ function Teams() {
                   <h5 className="card-title">{team.name}</h5>
                   <p className="card-text">{team.description}</p>
                   <div className="d-flex justify-content-between align-items-center mt-3">
-                    <span className="badge bg-primary">Team ID: {team._id}</span>
+                    <div>
+                      <span className="badge bg-primary me-2">Team ID: {team._id}</span>
+                      <span className="badge bg-success">{getMemberCount(team._id)} members</span>
+                    </div>
                     <small className="text-muted">
                       Created: {new Date(team.created_at).toLocaleDateString()}
                     </small>

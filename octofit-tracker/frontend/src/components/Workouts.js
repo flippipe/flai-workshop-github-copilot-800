@@ -88,7 +88,12 @@ function Workouts() {
                   {workout.exercises && (
                     <div className="mt-3">
                       <strong className="text-muted">Exercises:</strong>
-                      <p className="text-muted small mt-1">{workout.exercises}</p>
+                      <ul className="list-unstyled text-muted small mt-1">
+                        {Array.isArray(workout.exercises) 
+                          ? workout.exercises.map((exercise, idx) => <li key={idx}>• {exercise}</li>)
+                          : <li>• {workout.exercises}</li>
+                        }
+                      </ul>
                     </div>
                   )}
                 </div>
