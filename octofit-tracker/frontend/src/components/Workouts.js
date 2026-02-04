@@ -43,36 +43,66 @@ function Workouts() {
     fetchWorkouts();
   }, []);
 
-  if (loading) return <div className="container mt-4"><p>Loading workouts...</p></div>;
-  if (error) return <div className="container mt-4"><p className="text-danger">Error: {error}</p></div>;
+  if (loading) {
+    return (
+      <div className="container mt-4">
+        <div className="loading-spinner">
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
+  if (error) {
+    return (
+      <div className="container mt-4">
+        <div className="alert alert-danger" role="alert">
+          <strong>Error!</strong> {error}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mt-4">
-      <h2>Workouts</h2>
-      <div className="row">
-        {workouts.map((workout) => (
-          <div key={workout._id} className="col-md-6 mb-4">
-            <div className="card">
-              <div className="card-body">
-                <h5 className="card-title">{workout.name}</h5>
-                <p className="card-text">{workout.description}</p>
-                <div className="mb-2">
-                  <span className="badge bg-primary me-2">{workout.type}</span>
-                  <span className="badge bg-secondary me-2">{workout.difficulty}</span>
-                  <span className="badge bg-info">{workout.duration} min</span>
-                </div>
-                {workout.exercises && (
-                  <div className="mt-2">
-                    <strong>Exercises:</strong>
-                    <p className="text-muted small">{workout.exercises}</p>
+      <div className="page-container">
+        <div className="page-header">
+          <h1 className="page-title">💪 Workouts</h1>
+          <span className="stats-badge">Total: {workouts.length} workouts</span>
+        </div>
+        
+        <div className="row">
+          {workouts.map((workout) => (
+            <div key={workout._id} className="col-md-6 mb-4">
+              <div className="card">
+                <div className="card-body">
+                  <h5 className="card-title">{workout.name}</h5>
+                  <p className="card-text">{workout.description}</p>
+                  <div className="mb-3">
+                    <span className="badge bg-primary me-2">{workout.type}</span>
+                    <span className="badge bg-warning text-dark me-2">{workout.difficulty}</span>
+                    <span className="badge bg-info">{workout.duration} min</span>
                   </div>
-                )}
+                  {workout.exercises && (
+                    <div className="mt-3">
+                      <strong className="text-muted">Exercises:</strong>
+                      <p className="text-muted small mt-1">{workout.exercises}</p>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
+          ))}
+        </div>
+        
+        {workouts.length === 0 && (
+          <div className="alert alert-info" role="alert">
+            No workouts available.
           </div>
-        ))}
+        )}
       </div>
-      {workouts.length === 0 && <p className="text-muted">No workouts available.</p>}
     </div>
   );
 }

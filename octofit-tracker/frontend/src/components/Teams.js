@@ -43,28 +43,61 @@ function Teams() {
     fetchTeams();
   }, []);
 
-  if (loading) return <div className="container mt-4"><p>Loading teams...</p></div>;
-  if (error) return <div className="container mt-4"><p className="text-danger">Error: {error}</p></div>;
+  if (loading) {
+    return (
+      <div className="container mt-4">
+        <div className="loading-spinner">
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
+  if (error) {
+    return (
+      <div className="container mt-4">
+        <div className="alert alert-danger" role="alert">
+          <strong>Error!</strong> {error}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mt-4">
-      <h2>Teams</h2>
-      <div className="row">
-        {teams.map((team) => (
-          <div key={team._id} className="col-md-6 mb-4">
-            <div className="card">
-              <div className="card-body">
-                <h5 className="card-title">{team.name}</h5>
-                <p className="card-text">{team.description}</p>
-                <p className="text-muted small">
-                  Created: {new Date(team.created_at).toLocaleDateString()}
-                </p>
+      <div className="page-container">
+        <div className="page-header">
+          <h1 className="page-title">👥 Teams</h1>
+          <span className="stats-badge">Total: {teams.length} teams</span>
+        </div>
+        
+        <div className="row">
+          {teams.map((team) => (
+            <div key={team._id} className="col-md-6 mb-4">
+              <div className="card">
+                <div className="card-body">
+                  <h5 className="card-title">{team.name}</h5>
+                  <p className="card-text">{team.description}</p>
+                  <div className="d-flex justify-content-between align-items-center mt-3">
+                    <span className="badge bg-primary">Team ID: {team._id}</span>
+                    <small className="text-muted">
+                      Created: {new Date(team.created_at).toLocaleDateString()}
+                    </small>
+                  </div>
+                </div>
               </div>
             </div>
+          ))}
+        </div>
+        
+        {teams.length === 0 && (
+          <div className="alert alert-info" role="alert">
+            No teams available.
           </div>
-        ))}
+        )}
       </div>
-      {teams.length === 0 && <p className="text-muted">No teams available.</p>}
     </div>
   );
 }

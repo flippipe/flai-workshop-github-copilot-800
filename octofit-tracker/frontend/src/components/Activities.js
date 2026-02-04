@@ -43,43 +43,67 @@ function Activities() {
     fetchActivities();
   }, []);
 
-  if (loading) return <div className="container mt-4"><p>Loading activities...</p></div>;
-  if (error) return <div className="container mt-4"><p className="text-danger">Error: {error}</p></div>;
+  if (loading) {
+    return (
+      <div className="container mt-4">
+        <div className="loading-spinner">
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
+  if (error) {
+    return (
+      <div className="container mt-4">
+        <div className="alert alert-danger" role="alert">
+          <strong>Error!</strong> {error}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mt-4">
-      <h2>Activities</h2>
-      <div className="table-responsive">
-        <table className="table table-striped table-hover">
-          <thead className="table-dark">
-            <tr>
-              <th>ID</th>
-              <th>User ID</th>
-              <th>Type</th>
-              <th>Duration (min)</th>
-              <th>Distance (km)</th>
-              <th>Calories</th>
-              <th>Date</th>
-              <th>Notes</th>
-            </tr>
-          </thead>
-          <tbody>
-            {activities.map((activity) => (
-              <tr key={activity._id}>
-                <td>{activity._id}</td>
-                <td>{activity.user_id}</td>
-                <td><span className="badge bg-primary">{activity.type}</span></td>
-                <td>{activity.duration}</td>
-                <td>{activity.distance}</td>
-                <td>{activity.calories}</td>
-                <td>{new Date(activity.date).toLocaleDateString()}</td>
-                <td>{activity.notes}</td>
+      <div className="page-container">
+        <div className="page-header">
+          <h1 className="page-title">🏃 Activities</h1>
+          <span className="stats-badge">Total: {activities.length} activities</span>
+        </div>
+        
+        <div className="table-responsive">
+          <table className="table table-striped table-hover">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>User ID</th>
+                <th>Type</th>
+                <th>Duration (min)</th>
+                <th>Distance (km)</th>
+                <th>Calories</th>
+                <th>Date</th>
+                <th>Notes</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {activities.map((activity) => (
+                <tr key={activity._id}>
+                  <td><strong>#{activity._id}</strong></td>
+                  <td>{activity.user_id}</td>
+                  <td><span className="badge bg-primary">{activity.type}</span></td>
+                  <td>{activity.duration}</td>
+                  <td>{activity.distance?.toFixed(2)}</td>
+                  <td><span className="badge bg-success">{activity.calories}</span></td>
+                  <td>{new Date(activity.date).toLocaleDateString()}</td>
+                  <td className="text-muted">{activity.notes}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-      <p className="text-muted">Total activities: {activities.length}</p>
     </div>
   );
 }

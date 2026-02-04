@@ -43,45 +43,69 @@ function Leaderboard() {
     fetchLeaderboard();
   }, []);
 
-  if (loading) return <div className="container mt-4"><p>Loading leaderboard...</p></div>;
-  if (error) return <div className="container mt-4"><p className="text-danger">Error: {error}</p></div>;
+  if (loading) {
+    return (
+      <div className="container mt-4">
+        <div className="loading-spinner">
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
+  if (error) {
+    return (
+      <div className="container mt-4">
+        <div className="alert alert-danger" role="alert">
+          <strong>Error!</strong> {error}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mt-4">
-      <h2>Leaderboard</h2>
-      <div className="table-responsive">
-        <table className="table table-striped table-hover">
-          <thead className="table-dark">
-            <tr>
-              <th>Rank</th>
-              <th>User Name</th>
-              <th>Team ID</th>
-              <th>Total Activities</th>
-              <th>Total Duration (min)</th>
-              <th>Total Distance (km)</th>
-              <th>Total Calories</th>
-            </tr>
-          </thead>
-          <tbody>
-            {leaderboard.map((entry) => (
-              <tr key={entry._id}>
-                <td>
-                  <span className={`badge ${entry.rank <= 3 ? 'bg-warning' : 'bg-secondary'}`}>
-                    {entry.rank}
-                  </span>
-                </td>
-                <td><strong>{entry.user_name}</strong></td>
-                <td>{entry.team_id}</td>
-                <td>{entry.total_activities}</td>
-                <td>{entry.total_duration}</td>
-                <td>{entry.total_distance.toFixed(2)}</td>
-                <td>{entry.total_calories}</td>
+      <div className="page-container">
+        <div className="page-header">
+          <h1 className="page-title">🏆 Leaderboard</h1>
+          <span className="stats-badge">Total: {leaderboard.length} competitors</span>
+        </div>
+        
+        <div className="table-responsive">
+          <table className="table table-striped table-hover">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>User Name</th>
+                <th>Team</th>
+                <th>Activities</th>
+                <th>Duration (min)</th>
+                <th>Distance (km)</th>
+                <th>Calories</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {leaderboard.map((entry) => (
+                <tr key={entry._id}>
+                  <td>
+                    <span className={`badge ${entry.rank === 1 ? 'bg-warning text-dark' : entry.rank === 2 ? 'bg-secondary' : entry.rank === 3 ? 'bg-info' : 'bg-light text-dark'}`}>
+                      {entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : entry.rank === 3 ? '🥉' : ''} #{entry.rank}
+                    </span>
+                  </td>
+                  <td><strong>{entry.user_name}</strong></td>
+                  <td><span className="badge bg-info">Team {entry.team_id}</span></td>
+                  <td>{entry.total_activities}</td>
+                  <td>{entry.total_duration}</td>
+                  <td>{entry.total_distance?.toFixed(2)}</td>
+                  <td><span className="badge bg-success">{entry.total_calories}</span></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-      <p className="text-muted">Total entries: {leaderboard.length}</p>
     </div>
   );
 }

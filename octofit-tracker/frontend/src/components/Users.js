@@ -43,39 +43,63 @@ function Users() {
     fetchUsers();
   }, []);
 
-  if (loading) return <div className="container mt-4"><p>Loading users...</p></div>;
-  if (error) return <div className="container mt-4"><p className="text-danger">Error: {error}</p></div>;
+  if (loading) {
+    return (
+      <div className="container mt-4">
+        <div className="loading-spinner">
+          <div className="spinner-border text-primary" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
+  if (error) {
+    return (
+      <div className="container mt-4">
+        <div className="alert alert-danger" role="alert">
+          <strong>Error!</strong> {error}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mt-4">
-      <h2>Users</h2>
-      <div className="table-responsive">
-        <table className="table table-striped table-hover">
-          <thead className="table-dark">
-            <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Team ID</th>
-              <th>Role</th>
-              <th>Created At</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <tr key={user._id}>
-                <td>{user._id}</td>
-                <td><strong>{user.name}</strong></td>
-                <td>{user.email}</td>
-                <td><span className="badge bg-info">{user.team_id}</span></td>
-                <td><span className="badge bg-success">{user.role}</span></td>
-                <td>{new Date(user.created_at).toLocaleDateString()}</td>
+      <div className="page-container">
+        <div className="page-header">
+          <h1 className="page-title">👤 Users</h1>
+          <span className="stats-badge">Total: {users.length} users</span>
+        </div>
+        
+        <div className="table-responsive">
+          <table className="table table-striped table-hover">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Team</th>
+                <th>Role</th>
+                <th>Created At</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {users.map((user) => (
+                <tr key={user._id}>
+                  <td><strong>#{user._id}</strong></td>
+                  <td><strong>{user.name}</strong></td>
+                  <td className="text-muted">{user.email}</td>
+                  <td><span className="badge bg-info">Team {user.team_id}</span></td>
+                  <td><span className="badge bg-success">{user.role}</span></td>
+                  <td>{new Date(user.created_at).toLocaleDateString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-      <p className="text-muted">Total users: {users.length}</p>
     </div>
   );
 }

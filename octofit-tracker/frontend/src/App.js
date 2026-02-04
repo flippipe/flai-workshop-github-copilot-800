@@ -72,11 +72,64 @@ function App() {
         <Routes>
           <Route path="/" element={
             <div className="container mt-5">
-              <div className="jumbotron text-center">
-                <h1 className="display-4">Welcome to OctoFit Tracker</h1>
-                <p className="lead">Track your fitness activities and compete with your team!</p>
+              <div className="welcome-container">
+                <h1 className="welcome-title display-3">🏋️ Welcome to OctoFit Tracker</h1>
+                <p className="welcome-subtitle">Track your fitness activities and compete with your team!</p>
                 <hr className="my-4" />
-                <p>Use the navigation menu above to explore activities, leaderboard, teams, users, and workouts.</p>
+                <div className="row mt-5">
+                  <div className="col-md-4 mb-3">
+                    <div className="card text-center">
+                      <div className="card-body">
+                        <h2 className="card-title">🏃</h2>
+                        <h5 className="card-subtitle mb-2 text-muted">Track Activities</h5>
+                        <p className="card-text">Log all your fitness activities and monitor progress</p>
+                        <Link to="/activities" className="btn btn-primary">View Activities</Link>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-md-4 mb-3">
+                    <div className="card text-center">
+                      <div className="card-body">
+                        <h2 className="card-title">🏆</h2>
+                        <h5 className="card-subtitle mb-2 text-muted">Leaderboard</h5>
+                        <p className="card-text">Compete with others and climb the rankings</p>
+                        <Link to="/leaderboard" className="btn btn-primary">View Leaderboard</Link>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-md-4 mb-3">
+                    <div className="card text-center">
+                      <div className="card-body">
+                        <h2 className="card-title">💪</h2>
+                        <h5 className="card-subtitle mb-2 text-muted">Workout Plans</h5>
+                        <p className="card-text">Discover personalized workout routines</p>
+                        <Link to="/workouts" className="btn btn-primary">View Workouts</Link>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="row mt-4">
+                  <div className="col-md-6 mb-3">
+                    <div className="card text-center">
+                      <div className="card-body">
+                        <h2 className="card-title">👥</h2>
+                        <h5 className="card-subtitle mb-2 text-muted">Join Teams</h5>
+                        <p className="card-text">Collaborate with your team members</p>
+                        <Link to="/teams" className="btn btn-primary">View Teams</Link>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <div className="card text-center">
+                      <div className="card-body">
+                        <h2 className="card-title">👤</h2>
+                        <h5 className="card-subtitle mb-2 text-muted">User Profiles</h5>
+                        <p className="card-text">View all registered users and their stats</p>
+                        <Link to="/users" className="btn btn-primary">View Users</Link>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           } />
